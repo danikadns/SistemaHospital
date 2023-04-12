@@ -31,18 +31,44 @@ public class SistemaHospitalApp {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        System.out.println("PASO 1: CREAR TURNOS");
+        System.out.println("PASO 1: CREAR TURNOS "
+                + "********************************************************");
         generarFichasTurnos();
-        System.out.println("PASO 2: CREAR COLA DE PACIENTES");
-        formacionColaPacientes();
-        System.out.println("PASO 3: MOSTRAR LOS PACIENTES EN COLA");
-        mostrarPacientesEncola(colaPacientes);
-        System.out.println("PASO 4: ASIGNAR TURNOS");
         
-        System.out.println("PASO 5: MOSTRAR TURNOS");
+        System.out.println("PASO 2: CREAR COLA DE PACIENTES "
+                + "********************************************************");
+        formacionColaPacientes();
+        
+        System.out.println("PASO 3: MOSTRAR LOS PACIENTES EN COLA "
+                + "********************************************************");
+        mostrarPacientesEncola(colaPacientes);
+        
+        System.out.println("PASO 4: ASIGNAR TURNOS "
+                + "********************************************************");
+        asignarTurnos();
+        
+        System.out.println("PASO 5: MOSTRAR LAS PILAS DE TURNOS "
+                + "********************************************************");
         imprimirTodosTurnos();
-        System.out.println("PASO 6: ATENDIENDO A JAVIER");
-        Paciente pa = (Paciente) colaPacientes.quitar();
+        
+        System.out.println("PASO 6: ATENDIENDO A JAVIER "
+                + "********************************************************");
+        Paciente pa1 = (Paciente) colaPacientes.quitar();
+        Paciente pa2 = (Paciente) colaPacientes.quitar();
+        Paciente pa3 = (Paciente) colaPacientes.quitar();
+        atenderPaciente(pa1);
+        atenderPaciente(pa2);
+        atenderPaciente(pa3);
+        
+        
+        System.out.println("PASO 6.1: ESPECIALIDAD MÁS CONCURRIDA "
+                + "********************************************************");
+        calcularEspecialidadMasRequerida();
+
+        System.out.println("PASO 7: MOSTRAR LAS PILAS DE TURNOS "
+                + "********************************************************");
+        imprimirTodosTurnos();
+        
         
         
     }
@@ -68,8 +94,6 @@ public class SistemaHospitalApp {
     }
     
     public static void generarFichasTurnos(){
-    
-    
     
     //Llenar las pilas de turnos
     
@@ -115,7 +139,8 @@ public class SistemaHospitalApp {
         while (!p.pilaVacia()){
             FichaTurno fichaTurno = (FichaTurno) p.pop();
             
-            System.out.println("FICHA: ESPECIALIDAD->" +fichaTurno.getEspecialidad() + " TURNO->"+ fichaTurno.getNumeroTurno());
+            System.out.println("FICHA: ESPECIALIDAD->" +fichaTurno.getEspecialidad() + " "
+                    + "TURNO->"+ fichaTurno.getNumeroTurno());
             temporal.push(fichaTurno);
             
         }
@@ -136,9 +161,9 @@ public class SistemaHospitalApp {
         int p_odontologia = ParametrosGenerales.ODONTOLOGIA;
         int p_doctor_house = ParametrosGenerales.DOCTOR_HOUSE;
         Paciente paciente1 = new Paciente("Javier","Linares", 99.99, 20, 1, null, null, p_neurologia, p_ningunaEspecialidad);
-        Paciente paciente2 = new Paciente("Jacob","Martinez", 130, 22, 1, null, null, p_doctor_house, p_neurologia);
-        Paciente paciente3 = new Paciente("Maria","Gomez", 115, 40, 1, null, null, p_oncologia, p_pediatria);
-        Paciente paciente4 = new Paciente("Juana","De Arco", 220, 50, 1, null, null, p_odontologia, p_neurologia);
+        Paciente paciente2 = new Paciente("Jacob","Martinez", 130, 22, 1, null, null, p_doctor_house, p_odontologia);
+        Paciente paciente3 = new Paciente("Maria","Gomez", 115, 40, 1, null, null, p_maternidad, p_pediatria);
+        Paciente paciente4 = new Paciente("Juana","De Arco", 220, 50, 1, null, null, p_oncologia, p_neurologia);
         
         colaPacientes.insertar(paciente1);
         colaPacientes.insertar(paciente2);
@@ -151,7 +176,12 @@ public class SistemaHospitalApp {
         
         for(int i = 0; i< tamanoCola; i++){
             Paciente p = (Paciente ) listaPacientes.quitar();
-            System.out.println("PACIENTE: ->" +p.getNombre() + " " + p.getApellido() + " ESPECIALIDAD ->"+ p.getEspecialidad_1()+ "-"+ getNombreEspecialidad(p.getEspecialidad_1())+ " " + p.getEspecialidad_2() + "-" + getNombreEspecialidad(p.getEspecialidad_2()));
+            System.out.println("PACIENTE: ->" +p.getNombre()
+                    + " " + p.getApellido() 
+                    + " ESPECIALIDAD ->"
+                    + p.getEspecialidad_1()
+                    + "-"+ getNombreEspecialidad(p.getEspecialidad_1())
+                    + " " + p.getEspecialidad_2() + "-" + getNombreEspecialidad(p.getEspecialidad_2()));
             listaPacientes.insertar(p);
             
         }
@@ -161,7 +191,7 @@ public class SistemaHospitalApp {
         String nombreEspecialidad = "";
         switch (codigoEspecialidad){
             case ParametrosGenerales.NINGUNA_ESPECIALIDAD:
-                nombreEspecialidad = "NINGUNA";
+                nombreEspecialidad = "NINGUNA ESPECIALIDAD";
                 break;
             case ParametrosGenerales.NEUROLOGIA:
                 nombreEspecialidad = "NEUROLOGIA";
@@ -276,7 +306,58 @@ public class SistemaHospitalApp {
             paciente.setEspecialidad_1(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
             }
         
+        if (paciente.getEspecialidad_2() != ParametrosGenerales.NINGUNA_ESPECIALIDAD) {
+            
+            if (paciente.getEspecialidad_2() == ParametrosGenerales.NEUROLOGIA) {
+                
+                FichaTurno turno = paciente.getTurno2();
+                neurologia.push(turno);
+                paciente.setTurno2(null);
+                paciente.setEspecialidad_2(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
+            } else if (paciente.getEspecialidad_2() == ParametrosGenerales.MATERNIDAD) {
+                FichaTurno turno = paciente.getTurno2();
+                maternidad.push(turno);
+                paciente.setTurno2(null);
+                paciente.setEspecialidad_2(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
+            } else if (paciente.getEspecialidad_2() == ParametrosGenerales.PEDIATRIA) {
+                FichaTurno turno = paciente.getTurno2();
+                pediatria.push(turno);
+                paciente.setTurno2(null);
+                paciente.setEspecialidad_2(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
+            } else if (paciente.getEspecialidad_2() == ParametrosGenerales.ONCOLOGIA) {
+                FichaTurno turno = paciente.getTurno2();
+                oncologia.push(turno);
+                paciente.setTurno2(null);
+                paciente.setEspecialidad_2(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
+            } else if (paciente.getEspecialidad_2() == ParametrosGenerales.ODONTOLOGIA) {
+                FichaTurno turno = paciente.getTurno2();
+                odontologia.push(turno);
+                paciente.setTurno2(null);
+                paciente.setEspecialidad_2(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
+            } else if (paciente.getEspecialidad_2() == ParametrosGenerales.DOCTOR_HOUSE) {
+                FichaTurno turno = paciente.getTurno2();
+                dr_house.push(turno);
+                paciente.setTurno2(null);
+                paciente.setEspecialidad_2(ParametrosGenerales.NINGUNA_ESPECIALIDAD);
+            }
+            
+        }
         
+        
+    }
+    
+    
+    public static void calcularEspecialidadMasRequerida() {
+        
+        int cantNeuro = neurologia.cantidadElementosPila();
+        int cantMaternidad = maternidad.cantidadElementosPila();
+        if (cantNeuro < cantMaternidad) {
+            System.out.println("Maternidad es el mas concurrido");
+        } else if (cantNeuro > cantMaternidad) {
+            System.out.println("Neurologia es el mas concurrido");
+        } else {
+            System.out.println("Hay un perfecto equilibrio");
+        }
     }
     
 }
